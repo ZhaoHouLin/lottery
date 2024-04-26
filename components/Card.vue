@@ -27,11 +27,11 @@ const props = defineProps({
   overflow hidden
   flex(flex-start,,column)
   margin 1rem
-  z-index 1
+  z-index 2
   cursor pointer
   transition all .5s ease
   &:hover
-    transform translate(0,-20px)
+    margin-top -20px
   .photo
     size(,60%)
     background-color #eee

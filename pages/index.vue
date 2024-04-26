@@ -4,15 +4,16 @@ import QuestionIcon from "~/components/icons/IconQuestion.vue"
 // const counter = useCounterStore()
 
 const content = ref()
-const pack = ref()
+let cardWrap = ref([])
 const card = ref([])
 const randomIndex = ref()
 const randomEmployeeArray = ref([])
 
 let randomIndexArray = ref([])
 let zIndex = ref(0)
-let orignalPack = ref(null)
+let orignalPack = ref([])
 const resultArray = ref([])
+const resetBtn = ref()
 
 // Fisher-Yates Shuffle
 const shuffle = (array) => {
@@ -38,16 +39,30 @@ const randomFontSize = () => {
   return `${fz}px`
 }
 
-const initPacks = () => {
-  let packs = gsap.utils.toArray(".pack")
-  // let cards = gsap.utils.toArray(".card")
-  packs.forEach((item, idx) => {
-    gsap.set(item, {
-      transform: `rotate(${
+const cardWrapRotation = () => {
+  cardWrap.value.forEach((item, idx) => {
+    gsap.to(item, {
+      rotation:
         (idx * 360) / randomEmployeeArray.value.length +
-        360 / randomEmployeeArray.value.length / 2
-      }deg ) translate(0,-200px)`,
+        360 / randomEmployeeArray.value.length / 2,
+      transform: "scale(1)",
     })
+  })
+}
+
+const initPacks = () => {
+  cardWrap.value.forEach((item, idx) => {
+    gsap.set(item, {
+      rotation:
+        (idx * 360) / randomEmployeeArray.value.length +
+        360 / randomEmployeeArray.value.length / 2,
+      transform: "scale(1)",
+    })
+  })
+
+  gsap.set(`.card`, {
+    transform: "scale(1)",
+    y: -200,
   })
 }
 
@@ -67,20 +82,20 @@ const handleRandom = () => {
     let classNum = randomIndexArray.value.pop() + 1
     zIndex.value += 1
 
-    gsap.to(`.card-${classNum}`, {
-      transform: "scale(1.5)",
-      y: 0,
-    })
-
     gsap.set(`.card-${classNum} .photo`, {
       innerText: zIndex.value,
       fontSize: "32px",
     })
-    gsap.set(`.pack-${classNum}`, {
+    gsap.set(`.card-wrap-${classNum}`, {
       zIndex: zIndex.value,
+      // rotation: 0,
     })
-    gsap.to(`.pack-${classNum}`, {
-      transform: "rotate(0deg)",
+    gsap.to(`.card-wrap-${classNum}`, {
+      transform: "scale(1.5)",
+      rotation: 0,
+    })
+    gsap.to(`.card-${classNum}`, {
+      y: 0,
     })
 
     resultArray.value.push({
@@ -111,22 +126,14 @@ const buttonMouseUp = (e) => {
 }
 
 const reset = () => {
-  resetAnimation()
   zIndex.value = 0
   shuffle(randomEmployeeArray.value)
   randomIndexArray.value = Array.from(
     { length: randomEmployeeArray.value.length },
     (_, i) => i
   )
+  resetAnimation()
   initPacks()
-  // randomEmployeeArray.value = employeeData
-  let cards = gsap.utils.toArray(".card")
-  cards.forEach((item, idx) => {
-    gsap.to(item, {
-      transform: "scale(1)",
-      y: 0,
-    })
-  })
 
   gsap.set(`.photo`, {
     innerHTML: orignalPack.value,
@@ -137,8 +144,8 @@ const reset = () => {
 }
 
 const resetAnimation = () => {
-  gsap.set(".packs", { rotate: 0 })
-  gsap.to(".packs", {
+  gsap.set(".card-content", { rotate: 0 })
+  gsap.to(".card-content", {
     rotate: 360,
     duration: 0.5,
     // repeat: -1,
@@ -159,10 +166,11 @@ onMounted(async () => {
     (_, i) => i
   )
   // content.value.style.backgroundColor = "#222"
-  orignalPack.value = pack.value[0].querySelector(".photo").innerHTML
+  orignalPack.value = cardWrap.value[0].querySelector(".photo").innerHTML
+
   shuffle(randomEmployeeArray.value)
   initPacks()
-  // packsAnimation()
+
   resetAnimation()
 })
 </script>
@@ -174,14 +182,12 @@ onMounted(async () => {
       .result(v-for="(data,idx) in resultArray" :class="`result-${idx+1}`" :key="data")
         .order 第 {{ data["順位"] }} 順位
         .name {{ data["data"]["name"] }}
-  .packs
-    .pack(v-for="(data,idx) in randomEmployeeArray" ref='pack' :class='`pack-${idx+1}`' :key="data")
-      Card(:data='data' :class='`card-${idx+1}`' ref='card') 
-  //- .cards(v-for="(data,idx) in randomEmployeeArray" ref='pack' :class='`pack-${idx+1}`' :key="data")
-    Card(:data='data' :class='`card-${idx+1}`' ref='card') 
+  .card-content
+    .card-wrap(ref="cardWrap" v-for="(data,idx) in randomEmployeeArray" :class='`card-wrap-${idx+1}`')
+      Card( :data='data' :class='`card-${idx+1}`' ref='card') 
   .btns
     button(@click='handleRandom' @mousedown="buttonMouseDown('#ff004c',$event)" @mouseup="buttonMouseUp") 抽牌
-    button(@click='reset' @mousedown="buttonMouseDown('#00fa9a',$event)" @mouseup="buttonMouseUp") 洗牌
+    button(@click='reset' @mousedown="buttonMouseDown('#00fa9a',$event)" @mouseup="buttonMouseUp" ref="resetBtn" ) 洗牌
 
   .created
     p created by zz
@@ -211,21 +217,20 @@ onMounted(async () => {
         font-weight bold
     .result-1 .order
       color red
-
-  .packs
-    size()
+  .card-content
     flex()
-    position relative
-    // position absolute
-
-    .pack
-      size(auto,80%)
-      // size(auto,100px)
+    size()
+    .card-wrap
+      // size()
+      size(auto)
       flex()
+      // transform-origin 50% 50%
       padding 1rem
+      // position relative
       position absolute
-      z-index -1
-      // border 1px solid #000
+      z-index 1
+
+
 
   .btns
     z-index 100
