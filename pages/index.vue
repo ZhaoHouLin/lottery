@@ -10,7 +10,7 @@ const randomIndex = ref()
 const randomEmployeeArray = ref([])
 
 let randomIndexArray = ref([])
-let zIndex = ref(0)
+let zIndex = ref(1)
 let orignalPack = ref([])
 const resultArray = ref([])
 const resetBtn = ref()
@@ -57,6 +57,7 @@ const initPacks = () => {
         (idx * 360) / randomEmployeeArray.value.length +
         360 / randomEmployeeArray.value.length / 2,
       transform: "scale(1)",
+      zIndex: zIndex.value,
     })
   })
 
@@ -126,7 +127,7 @@ const buttonMouseUp = (e) => {
 }
 
 const reset = () => {
-  zIndex.value = 0
+  zIndex.value = 1
   shuffle(randomEmployeeArray.value)
   randomIndexArray.value = Array.from(
     { length: randomEmployeeArray.value.length },
