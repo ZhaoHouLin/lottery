@@ -145,6 +145,7 @@ const reset = () => {
 }
 
 const resetAnimation = () => {
+  // initPacks()
   gsap.set(".card-content", { rotate: 0 })
   gsap.to(".card-content", {
     rotate: 360,
@@ -152,6 +153,7 @@ const resetAnimation = () => {
     // repeat: -1,
     // repeatDelay: 0,
     ease: "linear",
+    onComplete: () => initPacks(),
   })
 }
 
@@ -159,6 +161,10 @@ const getData = async () => {
   const employeeData = await $fetch("/api/employeeData")
   randomEmployeeArray.value = employeeData
 }
+
+// const canClick=()=>{
+
+// }
 
 onMounted(async () => {
   await getData()
@@ -172,7 +178,7 @@ onMounted(async () => {
   shuffle(randomEmployeeArray.value)
   initPacks()
 
-  resetAnimation()
+  // resetAnimation()
 })
 </script>
 
