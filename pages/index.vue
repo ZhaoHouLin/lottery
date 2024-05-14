@@ -10,7 +10,7 @@ const randomIndex = ref()
 const randomEmployeeArray = ref([])
 
 let randomIndexArray = ref([])
-let zIndex = ref(1)
+let zIndex = ref(0)
 let orignalPack = ref([])
 const resultArray = ref([])
 const resetBtn = ref()
@@ -127,7 +127,7 @@ const buttonMouseUp = (e) => {
 }
 
 const reset = () => {
-  zIndex.value = 1
+  zIndex.value = 0
   shuffle(randomEmployeeArray.value)
   randomIndexArray.value = Array.from(
     { length: randomEmployeeArray.value.length },
