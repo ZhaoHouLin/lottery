@@ -28,17 +28,35 @@ export default defineNuxtConfig({
   app: {
     head: {
       viewport: "width=500, initial-scale=1",
-      title: "資訊室的命運抽牌",
+      title: "卡片式抽籤",
       meta: [
         {
-          name: "description",
-          content: "資訊室的命運抽牌",
+          "http-equiv": "Content-Security-Policy",
+          content:
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-src 'none';",
         },
-        { property: "og:title", content: "資訊室的命運抽牌" },
+
+        {
+          "http-equiv": "Strict-Transport-Security",
+          content: "max-age=31536000; includeSubDomains; preload",
+        },
+        {
+          "http-equiv": "X-Content-Type-Options",
+          content: "nosniff",
+        },
+        {
+          "http-equiv": "Referrer-Policy",
+          content: "no-referrer",
+        },
+        {
+          name: "description",
+          content: "卡片式抽籤",
+        },
+        { property: "og:title", content: "卡片式抽籤" },
         { property: "og:url", content: "" },
         {
           property: "og:description",
-          content: "資訊室的命運抽牌",
+          content: "卡片式抽籤",
         },
       ],
       link: [{ rel: "icon", type: "image/x-icon", href: "cdclogo.ico" }],

@@ -8,6 +8,7 @@ let cardWrap = ref([])
 const card = ref([])
 const randomIndex = ref()
 const randomEmployeeArray = ref([])
+const stick = ref()
 
 let randomIndexArray = ref([])
 let zIndex = ref(0)
@@ -15,8 +16,14 @@ let orignalPack = ref([])
 const resultArray = ref([])
 const resetBtn = ref()
 
+// const defaultStick = reactive(["1", "2"])
+const defaultStick = ref(
+  "吳思瑩,蔡佳學,賴宥安,翁啓桓,周貝盈,朱庭健,劉美潔,鄭聲和,梁鋆立,余芳如,華樹華,黃于珊,田京玉"
+)
+const employeeData = ref([])
+
 // Fisher-Yates Shuffle
-const shuffle = (array) => {
+const shuffle = async (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1)) //要加分號才不會報錯
     ;[array[i], array[j]] = [array[j], array[i]]
@@ -158,27 +165,30 @@ const resetAnimation = () => {
 }
 
 const getData = async () => {
-  const employeeData = await $fetch("/api/employeeData")
-  randomEmployeeArray.value = employeeData
-}
+  // const employeeData = await $fetch("/api/employeeData")
+  // console.log(defaultStick.data)
+  const replaceData = defaultStick.value.replace(/-|\s/g, ",").split(",")
+  employeeData.value = replaceData
+    .filter((item) => {
+      if (item) return true
+    })
+    .map((item) => {
+      return { name: item }
+    })
 
-// const canClick=()=>{
-
-// }
-
-onMounted(async () => {
-  await getData()
+  randomEmployeeArray.value = employeeData.value
   randomIndexArray.value = Array.from(
     { length: randomEmployeeArray.value.length },
     (_, i) => i
   )
-  // content.value.style.backgroundColor = "#222"
-  orignalPack.value = cardWrap.value[0].querySelector(".photo").innerHTML
 
-  shuffle(randomEmployeeArray.value)
+  await shuffle(randomEmployeeArray.value)
   initPacks()
+}
 
-  // resetAnimation()
+onMounted(async () => {
+  await getData()
+  orignalPack.value = cardWrap.value[0].querySelector(".photo").innerHTML
 })
 </script>
 
@@ -192,12 +202,18 @@ onMounted(async () => {
   .card-content
     .card-wrap(ref="cardWrap" v-for="(data,idx) in randomEmployeeArray" :class='`card-wrap-${idx+1}`')
       Card( :data='data' :class='`card-${idx+1}`' ref='card') 
-  .btns
-    button(@click='handleRandom' @mousedown="buttonMouseDown('#ff004c',$event)" @mouseup="buttonMouseUp") 抽牌
-    button(@click='reset' @mousedown="buttonMouseDown('#00fa9a',$event)" @mouseup="buttonMouseUp" ref="resetBtn" ) 洗牌
+
+  .control 
+    .stick
+      h2 籤筒
+      textarea(ref='stick' v-model="defaultStick" @input='getData')
+    .btns
+      button(@click='handleRandom' @mousedown="buttonMouseDown('#ff004c',$event)" @mouseup="buttonMouseUp") 抽牌
+      button(@click='reset' @mousedown="buttonMouseDown('#00fa9a',$event)" @mouseup="buttonMouseUp" ref="resetBtn" ) 洗牌
 
   .created
     p created by zz
+  
 </template>
 
 <style lang="stylus">
@@ -238,24 +254,6 @@ onMounted(async () => {
       z-index 1
 
 
-
-  .btns
-    z-index 100
-    position absolute
-    bottom 0
-    right 0
-    flex()
-    padding 1rem
-    button
-      size(100px,40px)
-      background none
-      border 1px solid #000
-      margin-left 1rem
-      cursor pointer
-      &:hover
-        box-shadow 2px 2px 4px rgba(0,0,0,0.5)
-        transform translate(-2px,-2px)
-
 .list-enter-active,.list-leave-active
   transition all .5s ease
 
@@ -268,4 +266,38 @@ onMounted(async () => {
   left 0
   bottom 0
   padding 1rem
+
+.control
+  flex(,,column)
+  z-index 100
+  position absolute
+  // bottom 0
+  right 2rem
+  size(auto)
+  // border 1px solid #000
+.stick
+  margin-right 1rem
+
+  textarea
+    size(216px)
+    word-break keep-all
+    margin 1rem 0
+.btns
+    // z-index 100
+    // position absolute
+    // bottom 0
+    // right 0
+    // border 1px solid #000
+    flex()
+    // padding 1rem
+    button
+      size(100px,40px)
+      background none
+      // border 1px solid #000
+      // margin-left 1rem
+      margin-right 1rem
+      cursor pointer
+      &:hover
+        box-shadow 2px 2px 4px rgba(0,0,0,0.5)
+        transform translate(-2px,-2px)
 </style>
