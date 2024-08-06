@@ -17,9 +17,7 @@ const resultArray = ref([])
 const resetBtn = ref()
 
 // const defaultStick = reactive(["1", "2"])
-const defaultStick = ref(
-  "吳思瑩,蔡佳學,賴宥安,翁啓桓,周貝盈,朱庭健,劉美潔,鄭聲和,梁鋆立,余芳如,華樹華,黃于珊,田京玉"
-)
+const defaultStick = ref("aaa,bbb,ccc,ddd,eee,fff,ggg,hhh,iii,jjj,kkk,lll,mmm")
 const employeeData = ref([])
 
 // Fisher-Yates Shuffle
